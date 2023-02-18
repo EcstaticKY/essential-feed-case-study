@@ -130,12 +130,15 @@ class FeedUIIntegrationTests: XCTestCase {
 		let (sut, loader) = makeSUT()
 		sut.loadViewIfNeeded()
 		
+		let image = makeImage()
 		let exp = expectation(description: "Wait for background queue")
 		DispatchQueue.global().async {
-			loader.completeFeedLoading(at: 0)
+			loader.completeFeedLoading(with: [image], at: 0)
 			exp.fulfill()
 		}
 		wait(for: [exp], timeout: 1.0)
+		
+		assertThat(sut, isRendering: [image])
 	}
 	
 	func test_loadFeedCompletion_rendersErrorMessageOnErrorUntilNextReload() {
